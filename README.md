@@ -1,4 +1,4 @@
-# Deep Relational Pooling
+# Relational Pooling
 
 ## Overview
 This is the code associated with the paper [Relational Pooling for Graph Representations](https://arxiv.org/abs/1903.02541). 
