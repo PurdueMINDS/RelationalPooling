@@ -1,0 +1,115 @@
+2019-01-23 04:28:48,987:INFO: {'--cv-fold': 0,
+ '--dense-dropout-prob': 0.0,
+ '--learning-rate': 0.01,
+ '--mlp-hidden-dim': 16,
+ '--model-type': 'regularGin',
+ '--num-epochs': 12,
+ '--num-gnn-layers': 5,
+ '--num-inf-perm': 5,
+ '--num-mlp-hidden': 2,
+ '--onehot-id-dim': 41,
+ '--out-weight-dir': '/scratch-data/murph213/',
+ '--seed-val': 1337,
+ '--set-epsilon-zero': False,
+ '--use-batchnorm': False,
+ '--vertex-embed-dim': 16}
+2019-01-23 04:28:48,988:INFO: ---Loading data...---
+2019-01-23 04:28:48,993:INFO: 140 Adjacency matrices were loaded
+2019-01-23 04:28:49,002:INFO: ---splitting into training and validation folds---
+2019-01-23 04:28:49,002:INFO:  The indices are shuffled, and the shuffle is consistent on many machines as long as python3 is used
+2019-01-23 04:28:49,006:INFO: Building model...
+2019-01-23 04:28:49,010:INFO: User indicated: Vertex attributes are NOT one hot
+2019-01-23 04:28:49,010:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,010:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,011:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,011:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,012:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,012:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,012:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,012:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,013:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,013:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,013:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,014:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,014:INFO: Dropout will NOT be used in MLP.
+2019-01-23 04:28:49,014:INFO: batchnorm will NOT be applied in MLP.
+2019-01-23 04:28:49,015:INFO: Dense layer dropout: 0.0
+2019-01-23 04:28:49,015:INFO: User indicated: epsilon_tunable = True
+2019-01-23 04:28:49,015:INFO: Epsilon_k WILL be LEARNED via backprop
+2019-01-23 04:28:49,015:INFO: It is initialized to zero
+2019-01-23 04:28:49,015:INFO: GinMultiGraph(
+  (raw_embedding_layer): MLP(
+    (layer_0): Linear(in_features=1, out_features=16, bias=True)
+    (layer_1): Linear(in_features=16, out_features=16, bias=True)
+    (layer_2): Linear(in_features=16, out_features=16, bias=True)
+  )
+  (agg_0): MLP(
+    (layer_0): Linear(in_features=16, out_features=16, bias=True)
+    (layer_1): Linear(in_features=16, out_features=16, bias=True)
+    (layer_2): Linear(in_features=16, out_features=16, bias=True)
+  )
+  (agg_1): MLP(
+    (layer_0): Linear(in_features=16, out_features=16, bias=True)
+    (layer_1): Linear(in_features=16, out_features=16, bias=True)
+    (layer_2): Linear(in_features=16, out_features=16, bias=True)
+  )
+  (agg_2): MLP(
+    (layer_0): Linear(in_features=16, out_features=16, bias=True)
+    (layer_1): Linear(in_features=16, out_features=16, bias=True)
+    (layer_2): Linear(in_features=16, out_features=16, bias=True)
+  )
+  (agg_3): MLP(
+    (layer_0): Linear(in_features=16, out_features=16, bias=True)
+    (layer_1): Linear(in_features=16, out_features=16, bias=True)
+    (layer_2): Linear(in_features=16, out_features=16, bias=True)
+  )
+  (agg_4): MLP(
+    (layer_0): Linear(in_features=16, out_features=16, bias=True)
+    (layer_1): Linear(in_features=16, out_features=16, bias=True)
+    (layer_2): Linear(in_features=16, out_features=16, bias=True)
+  )
+  (last_linear): Linear(in_features=81, out_features=10, bias=True)
+  (dense_layer_dropout): Dropout(p=0.0)
+  (epsilons): ParameterList(
+      (0): Parameter containing: [torch.FloatTensor of size 1]
+      (1): Parameter containing: [torch.FloatTensor of size 1]
+      (2): Parameter containing: [torch.FloatTensor of size 1]
+      (3): Parameter containing: [torch.FloatTensor of size 1]
+      (4): Parameter containing: [torch.FloatTensor of size 1]
+  )
+)
+2019-01-23 04:28:49,016:INFO: ------Training Model---------
+2019-01-23 04:28:49,016:INFO: Train X has shape torch.Size([4592, 1])
+2019-01-23 04:28:49,016:INFO: Val X has shape torch.Size([1148, 1])
+2019-01-23 04:28:49,016:INFO: Train y has shape torch.Size([112])
+2019-01-23 04:28:49,016:INFO: Validation y has shape torch.Size([28])
+2019-01-23 04:28:51,107:INFO: ~~~~~
+2019-01-23 04:28:51,107:INFO: Epoch:   0 | Train Loss: 287.92242 | Val Loss: 19.08630 | Train Accuracy : 0.10714 | Val Accuracy : 0.10714
+2019-01-23 04:28:53,154:INFO: ~~~~~
+2019-01-23 04:28:53,155:INFO: Epoch:   1 | Train Loss: 17.59324 | Val Loss: 21.50815 | Train Accuracy : 0.09821 | Val Accuracy : 0.10714
+2019-01-23 04:28:55,386:INFO: ~~~~~
+2019-01-23 04:28:55,387:INFO: Epoch:   2 | Train Loss: 21.36885 | Val Loss: 11.38049 | Train Accuracy : 0.09821 | Val Accuracy : 0.14286
+2019-01-23 04:28:57,384:INFO: ~~~~~
+2019-01-23 04:28:57,385:INFO: Epoch:   3 | Train Loss: 11.11135 | Val Loss: 15.29234 | Train Accuracy : 0.08929 | Val Accuracy : 0.10714
+2019-01-23 04:28:59,158:INFO: ~~~~~
+2019-01-23 04:28:59,159:INFO: Epoch:   4 | Train Loss: 14.30012 | Val Loss: 14.56442 | Train Accuracy : 0.09821 | Val Accuracy : 0.10714
+2019-01-23 04:29:00,638:INFO: ~~~~~
+2019-01-23 04:29:00,639:INFO: Epoch:   5 | Train Loss: 15.00910 | Val Loss: 10.52087 | Train Accuracy : 0.09821 | Val Accuracy : 0.10714
+2019-01-23 04:29:02,622:INFO: ~~~~~
+2019-01-23 04:29:02,623:INFO: Epoch:   6 | Train Loss: 11.12828 | Val Loss: 8.97679 | Train Accuracy : 0.09821 | Val Accuracy : 0.10714
+2019-01-23 04:29:04,575:INFO: ~~~~~
+2019-01-23 04:29:04,575:INFO: Epoch:   7 | Train Loss: 9.14753 | Val Loss: 10.08619 | Train Accuracy : 0.09821 | Val Accuracy : 0.07143
+2019-01-23 04:29:07,378:INFO: ~~~~~
+2019-01-23 04:29:07,379:INFO: Epoch:   8 | Train Loss: 10.37136 | Val Loss: 7.75332 | Train Accuracy : 0.10714 | Val Accuracy : 0.03571
+2019-01-23 04:29:09,634:INFO: ~~~~~
+2019-01-23 04:29:09,635:INFO: Epoch:   9 | Train Loss: 7.82652 | Val Loss: 7.68935 | Train Accuracy : 0.11607 | Val Accuracy : 0.10714
+2019-01-23 04:29:11,682:INFO: ~~~~~
+2019-01-23 04:29:11,683:INFO: Epoch:  10 | Train Loss: 8.33960 | Val Loss: 5.62804 | Train Accuracy : 0.09821 | Val Accuracy : 0.14286
+2019-01-23 04:29:14,166:INFO: ~~~~~
+2019-01-23 04:29:14,167:INFO: Epoch:  11 | Train Loss: 6.56234 | Val Loss: 5.54927 | Train Accuracy : 0.08929 | Val Accuracy : 0.10714
+2019-01-23 04:29:14,167:INFO: Saving model to file
+2019-01-23 04:29:14,167:INFO: /scratch-data/murph213/regularGin_cv_0_s1337_.pth
+2019-01-23 04:29:14,274:INFO: ...done saving
+2019-01-23 04:29:14,275:INFO: Saving metrics
+2019-01-23 04:29:14,275:INFO: /scratch-data/murph213/regularGin_cv_0_s1337_.pkl
+2019-01-23 04:29:14,333:INFO: ... done saving
