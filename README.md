@@ -23,7 +23,14 @@ For the molecular tasks, you will need
 ```
 python Run_Gin_Experiment.py --cv-fold 0 --num-epochs 12 --out-weight-dir /scratch-data/murph213/
 ```
-* IPython Notebooks are provided for the molecule tasks and can be run individually. Minor changes are required to run the tasks for a different dataset: this can be done by changing the 'TASK' macro variable to the dataset of choice.
+* For the k-ary tasks:
+```
+python Duvenaud-kary.py 'tox_21' 20
+```
+* For the RP-Duvenaud tasks:
+```
+python rp_duvenaud.py 'tox_21' 'unique_local' 0
+```
 
 ## Data
 * The datasets for the first set of tasks are available in the Synthetic_Data directory.

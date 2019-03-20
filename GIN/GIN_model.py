@@ -1,6 +1,6 @@
 ##########################################
 #
-# (anon), 2019
+# Ryan L Murphy and Balasubramaniam Srinivasan, 2019
 #
 # Implement Graph Isomorphism Network (GIN) https://arxiv.org/pdf/1810.00826.pdf
 # for the purposes of our project
