@@ -1,7 +1,8 @@
 # Relational Pooling
 
 ## Overview
-This is the code associated with the paper [Relational Pooling for Graph Representations](https://arxiv.org/abs/1903.02541). 
+This is the code associated with the paper [Relational Pooling for Graph Representations](https://arxiv.org/abs/1903.02541).
+Accepted at ICML, 2019. 
 
 Our first task evaluates RP-GIN, a powerful model we propose to make Graph Isomorphism Network of [Xu et. al. 2018](https://arxiv.org/abs/1810.00826) more powerful than its corresponding WL[1] test.   
 Our second set of tasks uses molecule datasets to evaluate different instantiations of RP.
