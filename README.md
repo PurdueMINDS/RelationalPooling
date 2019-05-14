@@ -7,6 +7,8 @@ Accepted at ICML, 2019.
 Our first task evaluates RP-GIN, a powerful model we propose to make Graph Isomorphism Network (GIN) [Xu et. al. 2019](https://arxiv.org/abs/1810.00826) more powerful than its corresponding WL[1] test. 
 Our second set of tasks uses molecule datasets to evaluate different instantiations of RP.
 
+The models are described in plain English in the appendix of our paper, but feel free to contact us with any questions (see below).  
+
 ## Requirements
 * [PyTorch](https://www.pytorch.org)
 * Python 3
