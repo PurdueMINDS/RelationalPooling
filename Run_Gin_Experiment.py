@@ -2,7 +2,7 @@
 (anon). Synthetic experiments with GIN and RP-GIN
 
 Usage:
-    Run_Gin_Experiment.py (--cv-fold <N>) (--out-weight-dir <folder>)  [--use-batchnorm] [--dense-dropout-prob <float>]
+    Run_Gin_Experiment.py (--cv-fold <N>) (--out-weight-dir <folder>) (--out-log-dir <folder>) [--use-batchnorm] [--dense-dropout-prob <float>]
                           [--num-mlp-hidden <N>] [--num-gnn-layers <N>]
                           [--model-type <string>]
                           [--set-epsilon-zero] [--vertex-embed-dim <N>]
@@ -13,6 +13,7 @@ Usage:
 Options:
     --cv-fold <N>                   Which fold in cross-validation: 0 thru 5
     --out-weight-dir <folder>       Output directory where trained weights (and any other objects) will be stored
+    --out-log-dir <folder>          Output directory where logfiles will be saved
     --use-batchnorm                 Boolean flag, should batch normalization be implemented?
     --dense-dropout-prob <float>    Dropout probability for the dense layer [default: 0.0]
     --num-mlp-hidden <N>            Number of hidden layers in the MLP [default: 2]
@@ -27,7 +28,7 @@ Options:
     --onehot-id-dim <N>             For use with rpGin.  Dimension of the one-hot ID. [default: 41]
     --seed-val <N>                  Seed value, to get different random inits and variability [default: 1337]
 """
-# python Run_Gin_Experiment.py --cv-fold 0 --model-type regularGin --num-epochs 100 --out-weight-dir some/folder
+# python Run_Gin_Experiment.py --cv-fold 0 --model-type regularGin --num-epochs 100 --out-weight-dir some/folder --out-log-dir some/other/folder
 #
 import docopt
 import os
@@ -63,7 +64,7 @@ def get_filename_prefix(args):
     if args['--onehot-id-dim'] != 41:
         prefix += "_onehot_id_dim_{}".format(args['--onehot-id-dim'])
 
-    prefix += "_s" + str(args['--seed-val']) + "_"
+    prefix += "_s" + str(args['--seed-val']) + "_epochs_" + str(args['--num-epochs']) + "_"
     return prefix
 
 
@@ -71,31 +72,36 @@ def get_train_val_idx(num_graphs, cv_fold):
     """ Return a tuple of the train and val indices,
     depending on the cv_fold
     This method shuffles the index (with a seed)
-    The shuffle is consistent across machiens with python3"""
+    The shuffle is consistent across machines with python3"""
     #
     # Extract indices of train and val in terms of the shuffled list
-    # For example,
-    # idx = [1, 0, 2, 3] is the shuffled list.
-    # We take
-    # [1, 0 | 2, 3]   as the train, val split
-    # Fold zero treats [1, 0] as train
-    # Fold one  treats [2, 3] as train
+    # Balanced across test and train
+    # Assumes 10-class
     #
     random.seed(1)
-    idx = list(range(num_graphs))  # this shuffle is consistent across machines with py3
-    random.shuffle(idx)
+    num_classes = 10
+    num_per_class = int(num_graphs/num_classes)
+    idx_to_classes = {}
+    val_idx = []
+    train_idx = []
+    for cc in range(num_classes):
+        idx_to_classes[cc] = list(range(cc*num_per_class, (cc+1)*num_per_class))
+        random.shuffle(idx_to_classes[cc])
+        # These indices correspond to the validation for this class.
+        class_val_idx = slice(cv_fold * 3, cv_fold * 3 + 3, 1)
+        # Extract validation.
+        vals = idx_to_classes[cc][class_val_idx]
+        val_idx.extend(vals)
+        train_idx.extend(list(set(idx_to_classes[cc]) - set(vals)))
     #
-    val_slice_size = int(num_graphs/5)
-    val_begin = cv_fold*val_slice_size
-    val_end = val_begin + val_slice_size
-    val_shuffled_idx = set(range(val_begin, val_end))
-    train_shuffled_idx = set(range(num_graphs))-val_shuffled_idx
-    #
-    return itemgetter(*train_shuffled_idx)(idx), itemgetter(*val_shuffled_idx)(idx)
+    return tuple(train_idx), tuple(val_idx)
 
-def accuracy(yhat, y):
+def accuracy(yhat, y, print_scores=False):
     """ Compute accuracy """
-    num_correct = torch.sum(torch.argmax(yhat, dim=1) == y).item()
+    scores = torch.argmax(yhat, dim=1)
+    if print_scores:
+        logging.info(scores)
+    num_correct = torch.sum(scores == y).item()
     return num_correct/float(len(y))
 
 if __name__ == '__main__':
@@ -106,6 +112,7 @@ if __name__ == '__main__':
         '--num-gnn-layers': Use(int),
         '--cv-fold': And(Use(int), lambda nnn: 0 <= nnn < 5),
         '--out-weight-dir': Use(str),
+        '--out-log-dir': Use(str),
         '--model-type': And(Use(str), lambda sss: sss in ['regularGin', 'dataAugGin', 'rpGin']),
         '--set-epsilon-zero': Use(bool),
         '--vertex-embed-dim': And(Use(int), lambda mmm: mmm > 0),
@@ -119,12 +126,14 @@ if __name__ == '__main__':
     args = docopt.docopt(__doc__)
     args = Schema(requirements).validate(args)
     assert os.path.isdir(args['--out-weight-dir']), "Must enter a valid output weights directory"
+    assert os.path.isdir(args['--out-log-dir']), "Must enter a valid output logs directory"
     #
     # Set up paths for logging and weight saving.
     #
     base_dir = os.getcwd()
     filename_pre = get_filename_prefix(args)
-    log_file = os.path.join(base_dir, 'Logs',  filename_pre + '.log')
+    log_file = os.path.join(args['--out-log-dir'],
+                            filename_pre + '.log')
 
     weights_file = os.path.join(args['--out-weight-dir'],
                                 filename_pre + '.pth')
@@ -181,6 +190,14 @@ if __name__ == '__main__':
     val_adjmats = list(itemgetter(*val_idx)(sparse_adjmats))
     y_train = y[torch.tensor(train_idx)]
     y_val = y[torch.tensor(val_idx)]
+    #
+    # Print class distribution
+    #
+    logging.info("------Class distributions---------")
+    logging.info("train:")
+    logging.info(np.unique(y_train.numpy(), return_counts=True))
+    logging.info("test:")
+    logging.info(np.unique(y_val.numpy(), return_counts=True))
 
     X_train = torch.cat(itemgetter(*train_idx)(X_list), dim=0)
     X_val = torch.cat(itemgetter(*val_idx)(X_list), dim=0)
@@ -274,8 +291,9 @@ if __name__ == '__main__':
             pred_val = model(val_adjmats, X_val)
             loss_val = loss_func(pred_val, y_val)
 
-            acc_train = accuracy(pred, y_train)
-            acc_val = accuracy(pred_val, y_val)
+            # get accuracy and print predictions if it's regular GIN
+            acc_train = accuracy(pred, y_train, print_scores=(epoch % 10 == 0))
+            acc_val = accuracy(pred_val, y_val, print_scores=(epoch % 10 == 0))
 
             logging.info("~"*5)
             logging.info(
