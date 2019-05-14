@@ -81,6 +81,7 @@ def get_train_val_idx(num_graphs, cv_fold):
     random.seed(1)
     num_classes = 10
     num_per_class = int(num_graphs/num_classes)
+    val_size = int(0.2 * num_per_class)
     idx_to_classes = {}
     val_idx = []
     train_idx = []
@@ -88,7 +89,7 @@ def get_train_val_idx(num_graphs, cv_fold):
         idx_to_classes[cc] = list(range(cc*num_per_class, (cc+1)*num_per_class))
         random.shuffle(idx_to_classes[cc])
         # These indices correspond to the validation for this class.
-        class_val_idx = slice(cv_fold * 3, cv_fold * 3 + 3, 1)
+        class_val_idx = slice(cv_fold * val_size, cv_fold * val_size + val_size, 1)
         # Extract validation.
         vals = idx_to_classes[cc][class_val_idx]
         val_idx.extend(vals)
