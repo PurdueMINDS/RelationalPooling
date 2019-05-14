@@ -21,7 +21,7 @@ num_epochs = 50
 inference_permutations = 20
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-
+#Since the individual features and the pairwise features aren't aligned across the conv and the weave models from deepchem, we align them using the atom features
 def align_adjacency(a, b):
     data0 = a.get_atom_features()
     data1 = b.get_atom_features()
@@ -37,12 +37,14 @@ def align_adjacency(a, b):
     return mapping_dict
 
 
+#Returns a random ordering of the atoms in the molecule
 def randomize_perm(a):
     ordering = list(range(a))
     shuffle(ordering)
     return ordering
 
 
+#Permuting the adjacency tensor in accordance with joint erxchangeability
 def permute_array(a, ordering, mapping_dict):
     pair_features = a.get_pair_features()
     new_array = np.zeros(pair_features.shape)
@@ -57,7 +59,7 @@ def permute_array(a, ordering, mapping_dict):
         m = m % mod_factor
     return new_array
 
-
+#Perform depth first search based on an input root node
 def depth_first_search(neighbour_list, root_node):
     visited_nodes = set()
     order = []
@@ -70,7 +72,7 @@ def depth_first_search(neighbour_list, root_node):
             stack.extend(set(neighbour_list[node]) - visited_nodes)
     return order
 
-
+#Construct the complete tensors using the pairwise and individual tensors adhering to joint exchangeability
 def construct_tensor(dataset_conv, dataset_weave, y):
     size = dataset_weave.shape[0]
     arr_pair = []
@@ -95,7 +97,7 @@ def unison_shuffled(a, b, c):
     p = np.random.permutation(len(a))
     return a[p], b[p], c[p]
 
-
+#The RNN model as described in the appendix of  the paper
 class RNNModel(nn.Module):
     def __init__(self):
         super(RNNModel, self).__init__()
