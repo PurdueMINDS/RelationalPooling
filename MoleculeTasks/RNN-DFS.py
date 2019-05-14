@@ -18,6 +18,7 @@ from sklearn.metrics import roc_auc_score
 TASK = sys.argv[1]
 batch_size = 96
 num_epochs = 50
+inference_permutations = 20
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
@@ -193,7 +194,7 @@ else :
 #Construct Valid and Test 
 indv, pair, y_true = construct_tensor(train_indv,train_pair, train_y)
 valid_indv, valid_pair, valid_y_true = construct_tensor(valid_indv, valid_pair, valid_y)
-test_indv, test_pair, test_y_true = construct_tensor(test_indv, test_pair, test_y)
+#test_indv, test_pair, test_y_true = construct_tensor(test_indv, test_pair, test_y)
 
 # Train over multiple epochs
 val_score_tracker, train_loss_tracker = [], []
@@ -250,7 +251,7 @@ for epoch in range(num_epochs):
         train_loss_tracker.append(loss.item())
         pickle.dump(train_loss_tracker, open("train_loss_dfs_rnn_{}.p".format(TASK), "wb" ))
         
-
+PATH = "train_loss_dfs_rnn_{}.p".format(TASK)
 end_time = time.time()
 total_training_time = end_time - start_time
 print("Total Time: ", total_training_time)
@@ -259,3 +260,23 @@ print("Total Time: ", total_training_time)
 # Run test-set prediction (TODO: paste separate script that uses trained model here)
 #
 
+# Load best model which was saved
+best_model = RNNModel().to(device)
+best_model.load_state_dict(torch.load(PATH))
+
+# Use the test set
+with torch.no_grad():
+	for num_perm in range(inference_permutations):
+	# Do a random shuffle and then compute probabilities
+	    test_indv, test_pair, test_y = unison_shuffled(test_indv,test_pair, test_y)
+    	indv, pair, y_true = construct_tensor(test_indv,test_pair, test_y)
+    	y_true_tensor = torch.FloatTensor(y_true).to(device)
+		if num_perm == 0 :
+			test_out = best_model.compute_proba(pair, indv)
+		else :
+			test_out += best_model.compute_proba(pair, indv)
+	test_out = test_out/inference_permutations
+	test_y_pred = np.round(test_out.detach().cpu().numpy())
+	test_score = roc_auc_score(np.array(y_true), test_y_pred)
+
+print("Test ROC AUC score: ", test_score)
