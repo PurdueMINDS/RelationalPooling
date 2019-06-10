@@ -48,4 +48,21 @@ python RNN-DFS.py 'tox_21'
 Please feel free to reach out to Ryan Murphy (murph213@purdue.edu) if you have any questions.
 
 ## Citation
-If you use this code, please consider citing our paper.  Bibtex entries for all ICML papers can be found on the [Proceedings of Machine Learning Research](http://proceedings.mlr.press/) website.  
+If you use this code, please consider citing our paper.  Here is the Bibtex entry:
+```
+@InProceedings{murphy19a,
+  title = 	 {Relational Pooling for Graph Representations},
+  author = 	 {Murphy, Ryan and Srinivasan, Balasubramaniam and Rao, Vinayak and Ribeiro, Bruno},
+  booktitle = 	 {Proceedings of the 36th International Conference on Machine Learning},
+  pages = 	 {4663--4673},
+  year = 	 {2019},
+  editor = 	 {Chaudhuri, Kamalika and Salakhutdinov, Ruslan},
+  volume = 	 {97},
+  series = 	 {Proceedings of Machine Learning Research},
+  address = 	 {Long Beach, California, USA},
+  month = 	 {09--15 Jun},
+  publisher = 	 {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v97/murphy19a/murphy19a.pdf},
+  url = 	 {http://proceedings.mlr.press/v97/murphy19a.html}
+}
+```  
